@@ -23,7 +23,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\PowerFile.CommandLine\PowerFile.CommandLine\PowerFile.CommandLine.csproj" />
+      <ProjectReference Include="..\..\src\PowerFile.Core\PowerFile.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\PowerFile.Core\PowerFile.Core.csproj" />
+    </ItemGroup>
 </Project>

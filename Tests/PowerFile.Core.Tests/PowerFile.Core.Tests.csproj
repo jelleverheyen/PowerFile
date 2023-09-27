@@ -24,11 +24,13 @@
         </PackageReference>
     </ItemGroup>
 
+
     <ItemGroup>
-      <ProjectReference Include="..\..\PowerFile.Core\PowerFile.Core.csproj" />
+      <ProjectReference Include="..\..\src\PowerFile.Core\PowerFile.Core.csproj" />
     </ItemGroup>
 
-
-
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\PowerFile.Core\PowerFile.Core.csproj" />
+    </ItemGroup>
 
 </Project>

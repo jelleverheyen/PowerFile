@@ -12,20 +12,8 @@
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0-rc.1.23419.4" />
     </ItemGroup>
 
-
-
     <ItemGroup>
-      <ProjectReference Include="..\..\PowerFile.Core.Templating\PowerFile.Core.Templating\PowerFile.Core.Templating.csproj" />
-      <ProjectReference Include="..\..\PowerFile.Core\PowerFile.Core.csproj" />
+      <ProjectReference Include="..\PowerFile.Core.Templating\PowerFile.Core.Templating.csproj" />
+      <ProjectReference Include="..\PowerFile.Core\PowerFile.Core.csproj" />
     </ItemGroup>
-
-
-
-
-
-
-    <ItemGroup>
-      <Folder Include="Templating\" />
-    </ItemGroup>
-
 </Project>

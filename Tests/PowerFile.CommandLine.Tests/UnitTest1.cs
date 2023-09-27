@@ -1,6 +1,6 @@
 using PowerFile.Core.Parsing;
-using PowerFile.Core.Scanning;
 using PowerFile.Core.Visitors;
+using PowerFileScanner = PowerFile.Core.Scanning.Scanner;
 
 namespace PowerFile.CommandLine.Tests;
 
@@ -17,8 +17,8 @@ public class UnitTest1
         int i = 0;
     }
     
-    private static Scanner CreateScanner(string pattern)
+    private static PowerFileScanner CreateScanner(string pattern)
     {
-        return new Scanner(pattern);
+        return new PowerFileScanner(pattern);
     }
 }
