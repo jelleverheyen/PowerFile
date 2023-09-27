@@ -3,5 +3,5 @@
 public interface ITemplateIndex
 {
     ITemplate? FindTemplate(string filename);
-    List<ITemplate> Templates { get; }
+    List<Template> Templates { get; }
 }

@@ -1,7 +1,9 @@
-﻿using PowerFile.Core.Templating.Abstractions;
+﻿using System.Text.Json.Serialization;
+using PowerFile.Core.Templating.Abstractions;
 
 namespace PowerFile.Core.Templating;
 
+[method: JsonConstructor]
 public class Template(string path) : ITemplate
 {
     public Template(string path, TemplateMetadata metadata) : this(path)
@@ -14,6 +16,7 @@ public class Template(string path) : ITemplate
         Content = content;
         Metadata = metadata;
     }
+    
 
     public string? Content { get; private set; }
 

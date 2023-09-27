@@ -7,14 +7,14 @@ public class TemplateIndex : ITemplateIndex
 {
     public TemplateIndex()
     {
-        Templates = new List<ITemplate>();
+        Templates = new List<Template>();
         Tags = new Dictionary<string, List<int>>();
         Suffixes = new Dictionary<string, List<int>>();
         Prefixes = new Dictionary<string, List<int>>();
         Keywords = new Dictionary<string, List<int>>();
     }
 
-    public TemplateIndex(IEnumerable<ITemplate> templates,
+    public TemplateIndex(IEnumerable<Template> templates,
         Dictionary<string, List<int>> tags,
         Dictionary<string, List<int>> suffixes,
         Dictionary<string, List<int>> prefixes,
@@ -22,7 +22,7 @@ public class TemplateIndex : ITemplateIndex
         (templates.ToList(), tags, suffixes, prefixes, keywords);
 
 
-    public TemplateIndex(IEnumerable<ITemplate> templates) : this()
+    public TemplateIndex(IEnumerable<Template> templates) : this()
     {
         Templates = templates.ToList();
 
@@ -34,7 +34,7 @@ public class TemplateIndex : ITemplateIndex
         }
     }
 
-    public List<ITemplate> Templates { get; init; }
+    public List<Template> Templates { get; init; }
     public IDictionary<string, List<int>> Tags { get; init; }
     public IDictionary<string, List<int>> Suffixes { get; init; }
     public IDictionary<string, List<int>> Prefixes { get; init; }
