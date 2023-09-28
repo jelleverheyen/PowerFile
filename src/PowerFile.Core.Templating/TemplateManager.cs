@@ -2,33 +2,21 @@
 
 namespace PowerFile.Core.Templating;
 
-public class TemplateManager : IPowerFileTemplateManager
+public class TemplateManager(ITemplateStore templateStore) : IPowerFileTemplateManager
 {
-    private readonly ITemplateStore _templateStore;
-
-    public TemplateManager(ITemplateStore templateStore)
+    public IDictionary<string, ITemplate?> FindTemplates(IEnumerable<string> fileNames)
     {
-        _templateStore = templateStore;
-    }
-    
-    public IDictionary<string, ITemplate> FindTemplates(string[] fileNames)
-    {
-        var result = new Dictionary<string, ITemplate>();
-        foreach (var fileName in fileNames)
-        {
-            var template = _templateStore.Match(fileName);
-            if (template is null)
-                continue;
-            
-            result.Add(fileName, template);
-        }
-
-        return result;
+        return fileNames
+            .Distinct()
+            .ToDictionary(
+            fileName => fileName,
+            templateStore.Match
+        );
     }
 
     public bool Reload()
     {
-        _templateStore.RebuildIndex();
+        templateStore.RebuildIndex();
 
         return true;
     }
