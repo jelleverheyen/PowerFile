@@ -134,4 +134,68 @@ Tests/Test_[1,10]
 ```
 ---
 ## Templates
-[WIP]
+PowerFile has support for templates, it'll automatically try to match a template to the files you try to create, if none are found it will create an empty file.
+
+### Defining a template
+Inside the templates directory for your OS, create a new file and add FrontMatter to define its metadata.
+Let's take a C# interface as an example, it can have any file name you like
+```csharp
+---
+name: C# Interface
+Description: Interface template for C#
+prefix: I
+keywords: null
+suffix: .cs
+tags: csharp interface
+---
+namespace $NAMESPACE$
+        
+public interface $FILE_NAME$
+{
+    $
+}    
+```
+
+When you run `powerfile reload`, it will index all the templates in the `config/templates` folder, based on the frontmatter that's defined inside the file.
+
+In this case the template will match any file name that starts with `I` and ends with `.cs`.
+
+Let's give it a try
+```
+> powerfile create "Abstractions/(IParser.cs,ITemplateStore.cs)" 
+```
+
+This will create a directory `Abstractions` with 2 files, IParser.cs and ITemplateStore.cs with the interface template we defined above
+
+### Conflicts
+It's possible that multiple templates are found for your file name.
+PowerFile tries to match the best template based on how many fields (Prefixes, Suffixes, and Keywords) are matched, as well as the length of the match.
+PowerFile will use the template it deems to be the most appropriate.
+
+E.g. if we take our interface template from above, and now add a new template for a C# class.
+We'll set the suffix to `.cs` for this template. This means that both the `interface` and `class` templates will be matched initially.
+
+This is where the template engine will compute a score.
+The interface template matches multiple fields (gives the most score) and also matches more text than the class template, so the `interface` template will be used.
+
+
+
+### Directories
+**Templates**
+- **Windows**:
+  - `%APPDATA%/PowerFile/Config/templates`
+- **MacOS**:
+  - `~/Library/Preferences/templates`
+- **Linux**:
+  - Environment Variable `XDG_CONFIG_HOME/PowerFile/templates`
+  - `~/.config`
+
+**Index**
+- **Windows**:
+    - `%LOCALAPPDATA%/PowerFile/Cache/templates.index`
+- **MacOS**:
+    - `~/Library/Caches/PowerFile/templates.index`
+- **Linux**:
+    - Environment Variable `$XDC_CACHE_HOME/PowerFile/templates.index`
+    - `~/.cache/PowerFile/templates.index`
+
