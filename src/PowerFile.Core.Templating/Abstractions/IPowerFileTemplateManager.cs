@@ -7,7 +7,7 @@ public interface IPowerFileTemplateManager
     /// </summary>
     /// <param name="fileNames"></param>
     /// <returns>A dictionary where the key is the fileName, and a list of templates that were found</returns>
-    IDictionary<string, ITemplate> FindTemplates(string[] fileNames);
+    IDictionary<string, ITemplate?> FindTemplates(IEnumerable<string> fileNames);
 
     /// <summary>
     /// Reloads the template index
