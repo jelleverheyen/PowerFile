@@ -98,7 +98,7 @@ public class TemplateFileSystemStore
     /// </summary>
     /// <param name="basePath">Directory path to start searching from</param>
     /// <returns>List of full paths for all the files that were found</returns>
-    private IEnumerable<string> EnumerateTemplateFiles(string basePath)
+    private static IEnumerable<string> EnumerateTemplateFiles(string basePath)
     {
         var queue = new Queue<string>();
         queue.Enqueue(basePath);

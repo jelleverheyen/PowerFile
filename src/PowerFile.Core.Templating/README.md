@@ -1,0 +1,3 @@
+﻿# PowerFile.Core.Templating
+
+WIP

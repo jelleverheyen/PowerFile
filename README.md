@@ -1,4 +1,9 @@
+# PowerFile
 Quickly create complex directory structures and files from templates with easy to write patterns.
+
+## Documentation
+- [Core Library](src/PowerFile.Core/README.md)
+- [Templates](src/PowerFile.Core.Templating/README.md)
 
 ## Example
 1. Create a new directory 'Features', that contains a 'Users', 'Chat', and 'Orders' directory, each of these need the directories 'Commands' and 'Queries'
