@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using PowerFile.Core.Templating.Abstractions;
+using PowerFile.Core.Templating.Serialization;
 
 namespace PowerFile.Core.Templating;
 
@@ -54,7 +55,7 @@ public class TemplateFileSystemStore
         var path = options.CurrentValue.IndexPath;
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         
-        var result = JsonSerializer.Serialize(_index);
+        var result = JsonSerializer.Serialize(_index, TemplateIndexJsonSerializerContext.Default.TemplateIndex);
         
         File.WriteAllText(path!, result, Encoding.UTF8);
 
@@ -84,9 +85,7 @@ public class TemplateFileSystemStore
                 $"Could not find any persisted index at path \"{indexPath}\", CreateIndex should be called first");
 
         var file = File.ReadAllText(indexPath);
-        var opts = new JsonSerializerOptions();
-        opts.IncludeFields = true;
-        _index = JsonSerializer.Deserialize<TemplateIndex>(file, opts);
+        _index = JsonSerializer.Deserialize<TemplateIndex>(file, TemplateIndexJsonSerializerContext.Default.TemplateIndex);
 
         return _index;
     }
