@@ -17,7 +17,7 @@ public class CreateVerbHandler(CreateVerbOptions options, IPowerFile powerFile,
 
                 return new
                 {
-                    FullPath = $"{Environment.CurrentDirectory}/{directoryName}/{fileName}".Replace("//", "/"),
+                    FullPath = Path.Combine(Environment.CurrentDirectory, directoryName ?? string.Empty, fileName),
                     FileName = !string.IsNullOrWhiteSpace(fileName) ? fileName : null,
                     Directory = !string.IsNullOrWhiteSpace(directoryName) ? directoryName : null
                 };
@@ -33,12 +33,16 @@ public class CreateVerbHandler(CreateVerbOptions options, IPowerFile powerFile,
         {
             if (file.Directory is not null)
                 Directory.CreateDirectory(file.Directory);
+
+            if (file.FileName is null) 
+                continue;
             
-            if (file.FileName is not null)
-            {
-                var template = templates[file.FileName];
+            var template = templates[file.FileName];
+            
+            if (string.IsNullOrWhiteSpace(template?.Content))
+                File.Create(file.FullPath);
+            else
                 File.WriteAllText(file.FullPath, template.Content);
-            }
         }
 
         return Task.FromResult(0);
