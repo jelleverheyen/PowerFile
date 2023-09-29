@@ -3,7 +3,8 @@ Quickly create complex directory structures and files from templates with easy t
 
 ## Technical documentation
 - [Core Library](src/PowerFile.Core/README.md)
-- [Templates](src/PowerFile.Core.Templating/README.md)
+- [Patterns](#patterns)
+- [Templates](#templates)
 
 ## Patterns
 You can write patterns to specify the directories and files you want to create.
