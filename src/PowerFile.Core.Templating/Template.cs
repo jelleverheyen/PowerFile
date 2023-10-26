@@ -15,6 +15,8 @@ public class Template(string path) : ITemplate
     {
         Content = content;
         Metadata = metadata;
+        
+        IsLoaded = true;
     }
     
 

@@ -4,14 +4,14 @@ namespace PowerFile.Core.Templating;
 
 public class TemplateManager(ITemplateStore templateStore) : IPowerFileTemplateManager
 {
-    public IDictionary<string, ITemplate?> FindTemplates(IEnumerable<string> fileNames)
+    public IDictionary<string, ITemplate?> FindTemplates(IEnumerable<string> fileNames, string[]? tags = null)
     {
         return fileNames
             .Distinct()
             .ToDictionary(
-            fileName => fileName,
-            templateStore.Match
-        );
+                fileName => fileName,
+                f => templateStore.Match(f, tags)
+            );
     }
 
     public bool Reload()

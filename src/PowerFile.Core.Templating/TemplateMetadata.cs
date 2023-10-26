@@ -10,6 +10,16 @@ public class TemplateMetadata
         Keywords = Array.Empty<string>();
     }
 
+    public TemplateMetadata(string? name = null, string? description = null, string[]? tags = null, string[]? prefixes = null, string[]? suffixes = null, string[]? keywords = null)
+    {
+        Name = name;
+        Description = description;
+        Tags = tags ?? Array.Empty<string>();
+        Prefixes = prefixes ?? Array.Empty<string>();
+        Suffixes = suffixes ?? Array.Empty<string>();
+        Keywords = keywords ?? Array.Empty<string>();
+    }
+
     public TemplateMetadata(TemplateMetadataDto metadata)
     {
         Name = metadata.Name ?? string.Empty;

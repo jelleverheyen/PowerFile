@@ -5,7 +5,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace PowerFile.Core.Templating.Tests;
 
-public class UnitTest1
+public class TemplateManagerTests
 {
     [Fact]
     public void Test1()
@@ -24,17 +24,8 @@ public class UnitTest1
         int i = 0;
     }
 
-    [Fact]
-    public void another()
-    {
-        var kek = Path.GetFileName("/Features/GaWeg/my_environment.dev.json");
-        var kek2 = Path.GetDirectoryName("/Features/GaWeg/");
-        int i = 0;
-    }
-
     private IDeserializer CreateDeserializer()
     {
-        // TODO: Inject this
         return new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .IgnoreUnmatchedProperties()

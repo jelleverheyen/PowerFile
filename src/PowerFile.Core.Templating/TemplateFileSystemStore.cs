@@ -39,13 +39,13 @@ public class TemplateFileSystemStore
         return _index;
     }
 
-    public ITemplate? Match(string fileName)
+    public ITemplate? Match(string fileName, string[]? tags = null)
     {
         var index = GetIndex();
-        var found = index.FindTemplate(fileName);
-
-        if (found is Template { IsLoaded: false } t)
-            t.Load(reader);
+        var found = index.FindTemplate(fileName, tags);
+        
+        if (found is { IsLoaded: false })
+            found.Load(reader);
         
         return found;
     }
@@ -77,7 +77,7 @@ public class TemplateFileSystemStore
         return result;
     }
 
-    private ITemplateIndex? LoadPersistedIndex()
+    private TemplateIndex? LoadPersistedIndex()
     {
         var indexPath = $"{options.CurrentValue.IndexPath}";
         if (!File.Exists(indexPath))

@@ -25,6 +25,7 @@ public interface ITemplateStore
     /// Attempts to match a template with the given file name
     /// </summary>
     /// <param name="fileName">Name of the file to be created</param>
+    /// <param name="tags">List of tags to filter the templates by</param>
     /// <returns>The found template if it exists</returns>
-    ITemplate? Match(string fileName);
+    ITemplate? Match(string fileName, string[]? tags = null);
 }

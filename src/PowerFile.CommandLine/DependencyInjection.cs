@@ -2,6 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using PowerFile.CommandLine.Config;
 using PowerFile.CommandLine.Verbs;
+using PowerFile.CommandLine.Verbs.Create;
+using PowerFile.CommandLine.Verbs.Preview;
+using PowerFile.CommandLine.Verbs.Reload;
 using PowerFile.Core;
 using PowerFile.Core.Templating;
 using PowerFile.Core.Templating.Abstractions;
@@ -12,7 +15,19 @@ namespace PowerFile.CommandLine;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddCrossPlatformPaths(this IServiceCollection services, string applicationName)
+    public static IServiceCollection AddPowerFileCommandLineApplication(this IServiceCollection services)
+    {
+        services.AddCrossPlatformPaths("PowerFile");
+        services.AddTransient<IPowerFileCommandLineApplication, DefaultPowerFileCommandLineApplication>()
+            .AddVerbHandlers();
+        
+        services.AddPowerFile();
+        services.AddCommandLineParser();
+        
+        return services;
+    }
+    
+    private static IServiceCollection AddCrossPlatformPaths(this IServiceCollection services, string applicationName)
     {
         services.AddSingleton<CrossPlatformDirectories>(x =>
         {
@@ -30,16 +45,12 @@ public static class DependencyInjection
 
         return services;
     }
-    
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+
+    private static IServiceCollection AddVerbHandlers(this IServiceCollection services)
     {
-        services.AddCrossPlatformPaths("PowerFile");
-        services.AddTransient<IPowerFileCommandLineApplication, DefaultPowerFileCommandLineApplication>();
-        services.AddTransient<IVerbHandlerFactory, DefaultVerbHandlerFactory>();
-        services.AddLogging();
-        
-        services.AddPowerFile();
-        services.AddCommandLineParser();
+        services.AddScoped<IVerbHandler<ReloadVerbOptions>, ReloadVerbHandler>();
+        services.AddScoped<IVerbHandler<PreviewVerbOptions>, PreviewVerbHandler>();
+        services.AddScoped<IVerbHandler<CreateVerbOptions>, CreateVerbHandler>();
         
         return services;
     }
@@ -94,6 +105,7 @@ public static class DependencyInjection
                 opts.AutoHelp = true;
                 opts.CaseSensitive = false;
                 opts.GetoptMode = true;
+                opts.HelpWriter = Console.Error;
             });
         });
     }

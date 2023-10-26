@@ -1,5 +1,5 @@
 ﻿using CommandLine;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using PowerFile.CommandLine.Verbs;
 using PowerFile.CommandLine.Verbs.Create;
 using PowerFile.CommandLine.Verbs.Preview;
@@ -12,22 +12,29 @@ public interface IPowerFileCommandLineApplication
     Task<int> RunAsync(IEnumerable<string> args);
 }
 
-public class DefaultPowerFileCommandLineApplication(ILogger<DefaultPowerFileCommandLineApplication> logger, Parser parser,
-        IVerbHandlerFactory verbHandlerFactory) : IPowerFileCommandLineApplication
+public class DefaultPowerFileCommandLineApplication(IServiceProvider serviceProvider, Parser parser) : IPowerFileCommandLineApplication
 {
     public async Task<int> RunAsync(IEnumerable<string> args)
     {
-        var handler = parser.ParseArguments<PreviewVerbOptions, CreateVerbOptions, ReloadVerbOptions>(args)
-            .MapResult(
-                (PreviewVerbOptions opts) => verbHandlerFactory.Create(opts),
-                (CreateVerbOptions opts) => verbHandlerFactory.Create(opts),
-                (ReloadVerbOptions opts) => verbHandlerFactory.Create(opts),
-                    errors => null!
-                );
-
-        if (handler is not null)
-            return await handler.HandleAsync();
+        var result = parser.ParseArguments(args, new[] { typeof(PreviewVerbOptions), typeof(CreateVerbOptions), typeof(ReloadVerbOptions) });
+        await result.WithParsedAsync(Handle);
 
         return 1;
+    }
+
+    private async Task<int> Handle(object o)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        switch (o)
+        {
+            case PreviewVerbOptions preview:
+                return await services.GetRequiredService<IVerbHandler<PreviewVerbOptions>>().HandleAsync(preview);
+            case CreateVerbOptions create:
+                return await services.GetRequiredService<IVerbHandler<CreateVerbOptions>>().HandleAsync(create);
+            case ReloadVerbOptions create:
+                return await services.GetRequiredService<IVerbHandler<ReloadVerbOptions>>().HandleAsync(create);
+            default: throw new ArgumentOutOfRangeException($"Failed to find verb handler '{o.GetType().FullName}'");
+        }
     }
 }

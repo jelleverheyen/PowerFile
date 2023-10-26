@@ -2,10 +2,9 @@
 
 namespace PowerFile.CommandLine.Verbs.Reload;
 
-public class ReloadVerbHandler
-    (ReloadVerbOptions options, IPowerFileTemplateManager templateManager) : VerbHandler<ReloadVerbOptions>(options)
+public class ReloadVerbHandler(IPowerFileTemplateManager templateManager) : IVerbHandler<ReloadVerbOptions>
 {
-    protected override Task<int> HandleAsync(ReloadVerbOptions options, CancellationToken cancellationToken = default)
+    public Task<int> HandleAsync(ReloadVerbOptions options, CancellationToken cancellationToken = default)
     {
         var success = templateManager.Reload();
 

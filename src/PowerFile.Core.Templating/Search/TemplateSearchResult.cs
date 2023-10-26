@@ -1,15 +1,14 @@
-﻿namespace PowerFile.Core.Templating;
+﻿namespace PowerFile.Core.Templating.Search;
 
 public class TemplateSearchResult
 {
-    private readonly IDictionary<int, TemplateMatch> _matches = new Dictionary<int, TemplateMatch>();
+    private readonly Dictionary<int, TemplateMatch> _matches = new();
 
     public TemplateMatch? GetResult()
     {
-        if (!_matches.Any())
-            return null;
-        
-        return _matches.MaxBy(m => m.Value.Score).Value;
+        return _matches.Count != 0
+            ? _matches.MaxBy(m => m.Value.Score).Value 
+            : null;
     }
     
     private TemplateMatch GetOrCreateMatch(int templateIndex)
@@ -60,65 +59,5 @@ public class TemplateSearchResult
             
             match.AddTagMatch(tag);
         }
-    }
-}
-
-public class TemplateMatch(int templateIndex)
-{
-    public int TemplateIndex { get; } = templateIndex;
-
-    public int Score { get; private set; }
-    public bool IsPrefixMatch { get; private set; }
-    public bool IsSuffixMatch { get; private set; }
-    public bool IsKeywordMatch { get; private set; }
-    public bool IsTagMatch { get; private set; }
-
-    public void AddPrefixMatch(string prefix)
-    {
-        if (!IsPrefixMatch)
-        {
-            IsPrefixMatch = true;
-            AddScore(20);
-        }
-
-        AddScore(prefix.Length);
-    }
-
-    public void AddSuffixMatch(string suffix)
-    {
-        if (!IsSuffixMatch)
-        {
-            IsSuffixMatch = true;
-            AddScore(20);
-        }
-
-        AddScore(suffix.Length);
-    }
-
-    public void AddKeywordMatch(string keyword)
-    {
-        if (!IsKeywordMatch)
-        {
-            IsKeywordMatch = true;
-            AddScore(20);
-        }
-
-        AddScore(keyword.Length);
-    }
-
-    public void AddTagMatch(string tag)
-    {
-        if (!IsTagMatch)
-        {
-            IsTagMatch = true;
-            AddScore(20);
-        }
-
-        AddScore(tag.Length);
-    }
-
-    private void AddScore(int score)
-    {
-        Score += score;
     }
 }

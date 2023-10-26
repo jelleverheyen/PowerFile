@@ -9,9 +9,9 @@ async Task<int> RunAsync(string[] args)
     var builder = Host.CreateApplicationBuilder();
     var services = builder.Services;
 
-    services.AddApplication();
+    services.AddPowerFileCommandLineApplication();
+    
     var host = builder.Build();
-
     var app = host.Services.GetRequiredService<IPowerFileCommandLineApplication>();
 
     return await app.RunAsync(args);

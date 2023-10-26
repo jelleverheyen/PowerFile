@@ -3,9 +3,9 @@ using PowerFile.Core.Visitors;
 
 namespace PowerFile.CommandLine.Verbs.Preview;
 
-public class PreviewVerbHandler(PreviewVerbOptions options, IPowerFile powerFile) : VerbHandler<PreviewVerbOptions>(options)
+public class PreviewVerbHandler(IPowerFile powerFile) : IVerbHandler<PreviewVerbOptions>
 {
-    protected override Task<int> HandleAsync(PreviewVerbOptions options, CancellationToken cancellationToken = default)
+    public Task<int> HandleAsync(PreviewVerbOptions options, CancellationToken cancellationToken = default)
     {
         var lines = options.Debug 
             ? new PowerFileExpressionPrinter().Print(powerFile.Parse(options.Pattern)) 

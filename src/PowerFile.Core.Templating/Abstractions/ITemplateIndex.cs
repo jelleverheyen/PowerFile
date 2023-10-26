@@ -2,6 +2,7 @@
 
 public interface ITemplateIndex
 {
-    ITemplate? FindTemplate(string filename);
+    Template? FindTemplate(string filename, string[]? tags = null);
+    void AddTemplate(Template template);
     List<Template> Templates { get; }
 }

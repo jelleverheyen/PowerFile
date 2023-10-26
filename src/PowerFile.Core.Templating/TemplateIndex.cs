@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using PowerFile.Core.Templating.Abstractions;
+﻿using PowerFile.Core.Templating.Abstractions;
+using PowerFile.Core.Templating.Search;
 
 namespace PowerFile.Core.Templating;
 
@@ -15,22 +15,19 @@ public class TemplateIndex : ITemplateIndex
     }
 
     public TemplateIndex(IEnumerable<Template> templates,
-        Dictionary<string, List<int>> tags,
-        Dictionary<string, List<int>> suffixes,
-        Dictionary<string, List<int>> prefixes,
-        Dictionary<string, List<int>> keywords) => (Templates, Tags, Suffixes, Prefixes, Keywords) =
-        (templates.ToList(), tags, suffixes, prefixes, keywords);
+        IDictionary<string, List<int>> tags,
+        IDictionary<string, List<int>> suffixes,
+        IDictionary<string, List<int>> prefixes,
+        IDictionary<string, List<int>> keywords)
+        => (Templates, Tags, Suffixes, Prefixes, Keywords) = (templates.ToList(), tags, suffixes, prefixes, keywords);
 
 
     public TemplateIndex(IEnumerable<Template> templates) : this()
     {
         Templates = templates.ToList();
-
-        var current = 0;
         foreach (var template in Templates)
         {
-            IndexTemplate(template, current);
-            current++;
+            AddTemplate(template);
         }
     }
 
@@ -40,10 +37,25 @@ public class TemplateIndex : ITemplateIndex
     public IDictionary<string, List<int>> Prefixes { get; init; }
     public IDictionary<string, List<int>> Keywords { get; init; }
 
-    public ITemplate? FindTemplate(string fileName)
+    public void AddTemplate(Template template)
+    {
+        var addedTemplateIndex = Templates.Count;
+        
+        var metadata = template.Metadata;
+        if (metadata is null)
+            return;
+
+        IndexTemplateMetadata(nameof(Tags), addedTemplateIndex, metadata.Tags);
+        IndexTemplateMetadata(nameof(Prefixes), addedTemplateIndex, metadata.Prefixes);
+        IndexTemplateMetadata(nameof(Suffixes), addedTemplateIndex, metadata.Suffixes);
+        IndexTemplateMetadata(nameof(Keywords), addedTemplateIndex, metadata.Keywords);
+        
+        Templates.AddRange(Templates);
+    }
+
+    public Template? FindTemplate(string fileName, string[]? tags = null)
     {
         var search = new TemplateSearchResult();
-
         foreach (var prefix in Prefixes.Where(p => fileName.StartsWith(p.Key)))
         {
             search.SetMatchingPrefix(prefix.Key, prefix.Value);
@@ -59,9 +71,9 @@ public class TemplateIndex : ITemplateIndex
             search.SetMatchingKeyword(keyword.Key, keyword.Value);
         }
 
-        foreach (var tag in Tags.Where(p => fileName.Contains(p.Key)))
+        foreach (var tag in Tags.Where(p => (tags ?? Array.Empty<string>()).Contains(p.Key)))
         {
-            search.SetMatchingKeyword(tag.Key, tag.Value);
+            search.SetMatchingTags(tag.Key, tag.Value);
         }
 
         var result = search.GetResult();
@@ -70,42 +82,26 @@ public class TemplateIndex : ITemplateIndex
             : Templates[result.TemplateIndex];
     }
 
-    private void IndexTemplate(ITemplate template, int index)
+    private void IndexTemplateMetadata(string property, int index, string[] values)
     {
-        var metadata = template.Metadata;
-        if (metadata is null)
+        if (values.Length == 0)
             return;
 
-        foreach (var tag in metadata.Tags)
+        var list = property switch
         {
-            if (!Tags.ContainsKey(tag))
-                Tags[tag] = new List<int>();
+            nameof(Tags) => Tags,
+            nameof(Prefixes) => Prefixes,
+            nameof(Suffixes) => Suffixes,
+            nameof(Keywords) => Keywords,
+            _ => throw new ArgumentOutOfRangeException(nameof(property), property, "No such template index field exists")
+        };
 
-            Tags[tag].Add(index);
-        }
-
-        foreach (var prefix in metadata.Prefixes)
+        foreach (var value in values)
         {
-            if (!Prefixes.ContainsKey(prefix))
-                Prefixes[prefix] = new List<int>();
+            if (!list.ContainsKey(value))
+                list[value] = new List<int>();
 
-            Prefixes[prefix].Add(index);
-        }
-
-        foreach (var suffix in metadata.Suffixes)
-        {
-            if (!Suffixes.ContainsKey(suffix))
-                Suffixes[suffix] = new List<int>();
-
-            Suffixes[suffix].Add(index);
-        }
-
-        foreach (var keyword in metadata.Keywords)
-        {
-            if (!Keywords.ContainsKey(keyword))
-                Keywords[keyword] = new List<int>();
-
-            Keywords[keyword].Add(index);
+            list[value].Add(index);
         }
     }
 }

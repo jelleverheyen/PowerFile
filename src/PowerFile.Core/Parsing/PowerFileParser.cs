@@ -15,7 +15,7 @@ public class PowerFileParser(IEnumerable<Token> tokens)
     {
         StartExplicitGroup();
         
-        while (_groupStack.Any())
+        while (_groupStack.Count != 0)
         {
             if (Check(TokenType.String) || Check(TokenType.DirectorySeparator))
             {
@@ -35,7 +35,7 @@ public class PowerFileParser(IEnumerable<Token> tokens)
             if (Peek().IsGroupTerminator())
             {
                 var group = _groupStack.Pop();
-                if (!_groupStack.Any())
+                if (_groupStack.Count == 0)
                     return group;
 
                 AddToCurrentGroup(group);
@@ -87,17 +87,26 @@ public class PowerFileParser(IEnumerable<Token> tokens)
 
     private void AddToCurrentGroup(PowerFileExpression expression)
     {
-        if (!_groupStack.Any())
+        if (_groupStack.Count == 0)
             throw new InvalidGroupException($"Attempted to close non-existing group with '{Peek().Lexeme}'");
             
         _groupStack.Peek().AddChild(expression);
     }
 
+    /// <summary>
+    /// Check if the current token is of the same type as <see cref="type"/>
+    /// </summary>
+    /// <param name="type">Expected type of the current Token</param>
+    /// <returns>True if TokenTypes are equal</returns>
     private bool Check(TokenType type)
     {
         return Peek().Type == type;
     }
 
+    /// <summary>
+    /// Return the current token and move to the next one
+    /// </summary>
+    /// <returns>The current <see cref="Token"/> before advancing</returns>
     private Token Advance()
     {
         if (!IsAtEnd()) _current++;
@@ -125,6 +134,11 @@ public class PowerFileParser(IEnumerable<Token> tokens)
         _groupStack.Push(new ExpandableGroupExpression());
     }
 
+    /// <summary>
+    /// Checks if the current character is a group token and also if it can be added to or used to pop the stack. E.g. You cannot have a ']' after '(' or a '(' after '[' 
+    /// </summary>
+    /// <returns>True if the token is valid</returns>
+    /// <exception cref="InvalidGroupException">Thrown when an invalid group token is found</exception>
     private bool IsValidGroupToken()
     {
         var current = Peek();

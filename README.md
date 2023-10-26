@@ -36,15 +36,8 @@ Features/,Tests/ or (Features/,Tests/)
 Or slightly more complex:
 ```
 Features/(Orders,Users)/,Tests/(Orders,Users)/
-
-- Features
-    - Orders
-    - Users
-- Tests
-    - Orders
-    - Users
 ```
-This pattern could also be rewritten asj:
+This pattern could also be rewritten as:
 ```
 (Features,Test)/(Orders,Users)/
 ```
@@ -53,6 +46,14 @@ The directory separator can also be put in a group`/`
 (Features/,Test/)(Orders/,Users/)
 ```
 All three patterns above have the same result.
+```
+- Features
+    - Orders
+    - Users
+- Tests
+    - Orders
+    - Users
+```
 
 Let's try to create some files now.
 ```
@@ -75,30 +76,36 @@ With a simple **50 character** pattern, we manage to create 7 directories and 4 
 
 ### More pattern examples
 #### Expansion
-Create a new directory 'Features', that contains a 'Users', 'Chat', and 'Orders' directory, each of these need the directories 'Commands' and 'Queries'.
-
-This can be done with a simple pattern:
+Create a new directory 'Features', that contains a 'Users', 'Chat', and 'Orders' directory, each of these need the directories 'Commands' and 'Queries':
 ```
 Features/(Orders,Users,Chat)/(Commands,Queries)/
 
-> Features/Orders/Commands/
-> Features/Orders/Queries/
-> Features/Users/Commands/
-> Features/Users/Queries/
-> Features/Chat/Commands/
-> Features/Chat/Queries/
+Result:
+- Features/
+  - Orders/
+    - Commands/
+    - Queries/
+  - Users/
+    - Commands/
+    - Queries/
+  - Chat/
+    - Commands/
+    - Queries/
 ```
 ---
-The same structure but only 'Users' and 'Chat' should contain 'Commands' and 'Queries':
+The same structure but only 'Users' and 'Chat' should contain 'Commands' and 'Queries', the 
 ```
 Features/(Orders,(Users,Chat)/(Commands,Queries))/
 
-> Features/Orders
-> Features/Orders
-> Features/Users/Commands/
-> Features/Users/Queries/
-> Features/Chat/Commands/
-> Features/Chat/Queries/
+Result:
+- Features/
+  - Orders/
+  - Users/
+    - Commands/
+    - Queries/
+  - Chat/
+    - Commands/
+    - Queries/
 ```
 The pattern can be dissected a bit to make it a little more clear
 ```
@@ -184,18 +191,18 @@ The interface template matches multiple fields (gives the most score) and also m
 ### Directories
 **Templates**
 - **Windows**:
-  - `%APPDATA%/PowerFile/Config/templates`
+  - `%APPDATA%/PowerFile/Config/PowerFile/templates`
 - **MacOS**:
-  - `~/Library/Preferences/templates`
+  - `~/Library/Preferences/PowerFile/templates`
 - **Linux**:
   - Environment Variable `XDG_CONFIG_HOME/PowerFile/templates`
   - `~/.config`
 
 **Index**
 - **Windows**:
-    - `%LOCALAPPDATA%/PowerFile/Cache/templates.index`
+    - `%LOCALAPPDATA%/PowerFile/Cache/PowerFile/templates.index`
 - **MacOS**:
-    - `~/Library/Caches/PowerFile/templates.index`
+    - `~/Library/Caches/PowerFile/PowerFile/templates.index`
 - **Linux**:
     - Environment Variable `$XDC_CACHE_HOME/PowerFile/templates.index`
     - `~/.cache/PowerFile/templates.index`
